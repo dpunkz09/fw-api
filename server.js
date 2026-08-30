@@ -114,9 +114,16 @@ function decrypt(encryptedString) {
 
 /**
  * Returns true if the URL or type indicates an HLS stream.
+ * Covers: explicit type flag, .m3u8 extension, and HLS path segments
+ * like /hls/, /hls2/, /hls3/ used by servers that serve playlists
+ * with non-standard extensions (e.g. master.txt from rogflix).
  */
 function isHls(url, type) {
-  return type === "hls" || (typeof url === "string" && url.includes(".m3u8"));
+  if (type === "hls") return true;
+  if (typeof url !== "string") return false;
+  if (url.includes(".m3u8")) return true;
+  if (/\/hls\d*\//i.test(url)) return true;
+  return false;
 }
 
 /**
