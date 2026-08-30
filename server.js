@@ -191,8 +191,14 @@ function extractUrls(data) {
     }
   }
 
-  if (data.title)    result.title    = data.title;
-  if (data.all_urls) result.all_urls = data.all_urls;
+  if (data.title) result.title = data.title;
+
+  // all_urls — wrap each entry through HLS proxy (zeta/nextgencloudfabric)
+  if (Array.isArray(data.all_urls) && data.all_urls.length) {
+    result.all_urls = data.all_urls.map((u) =>
+      isHls(u, null) ? wrapHlsUrl(u) : u
+    );
+  }
 
   return result;
 }
