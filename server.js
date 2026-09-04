@@ -329,6 +329,19 @@ async function resolveStream(serverPath, cacheKey) {
 
 const app = express();
 
+// Allow flixworld.xyz (and local dev) to call this API from the browser
+app.use((req, res, next) => {
+  const allowed = ['https://flixworld.xyz', 'http://localhost:3000', 'http://localhost:4321'];
+  const origin  = req.headers.origin;
+  if (origin && allowed.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
+
 // ---------------------------------------------------------------------------
 // GET /decrypt/:encoded
 // ---------------------------------------------------------------------------
