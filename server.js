@@ -47,7 +47,20 @@ if (!process.env.REDIS_URL) {
 
 const redis = new Redis(process.env.REDIS_URL, {
   maxRetriesPerRequest: 2,
-  retryStrategy: (times) => Math.min(times * 100, 3000),
+  retryStrategy: (times) => {
+    if (times > 10) {
+      console.error(`[Redis] Giving up after ${times} retries`);
+      return null; // stop retrying
+    }
+    const delay = Math.min(times * 500, 10_000); // 500ms, 1s, ... up to 10s
+    console.log(`[Redis] Retry #${times} in ${delay}ms`);
+    return delay;
+  },
+  reconnectOnError: (err) => {
+    const targetErrors = ['READONLY', 'ETIMEDOUT'];
+    return targetErrors.some(e => err.message.includes(e));
+  },
+  enableOfflineQueue: false, // fail fast instead of queuing commands while disconnected
 });
 
 redis.on("connect", () => console.log("Redis: connecting..."));
