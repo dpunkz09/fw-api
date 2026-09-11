@@ -30,7 +30,7 @@ const UPSTREAM_ORIGIN   = process.env.UPSTREAM_ORIGIN  || "https://vidnest.fun";
 // HLS reverse proxy — wraps HLS stream URLs so the player fetches segments
 // through this proxy instead of hitting the origin directly.
 // Set to empty string to disable.
-const HLS_PROXY = process.env.HLS_PROXY ?? "https://proxy.jpaworx.com/?url=";
+const HLS_PROXY = process.env.HLS_PROXY ?? "https://watch.flixworld.xyz/api/v1/streamingProxy?url=";
 
 // ---------------------------------------------------------------------------
 // Validate required env
